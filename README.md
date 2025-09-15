@@ -8,23 +8,23 @@ Implement a three‑tier Azure network (web, app, db) using **Network Security G
 
 ```mermaid
 flowchart LR
-  Internet((Internet)) --> |8080| WebVM[web-vm]
-  subgraph VNet(NetShieldVnet)
+  Internet((Internet)) -->|8080| WebVM[web-vm]
+
+  subgraph NetShieldVnet
     direction LR
-    subgraph Web(web-subnet)
+    subgraph Web["web-subnet"]
       WebVM
     end
-    subgraph App(app-subnet)
+    subgraph App["app-subnet"]
       AppVM[app-vm]
     end
-    subgraph DB(db-subnet)
+    subgraph DB["db-subnet"]
       DbVM[db-vm]
     end
   end
 
-  WebVM <--> |App-only| AppVM
-  AppVM -.X.- |Denied| DbVM
-```
+  WebVM <-->|App-only| AppVM
+  AppVM -.->|Denied| DbVM
 
 **Traffic policy highlights**
 - Allow `app -> web` on tcp/8080 (via ASG/NSG rules)
