@@ -1,0 +1,11 @@
+.DS_Store
+*.log
+*.tmp
+*.bak
+target/
+out/
+bin/
+.terraform/
+terraform.tfstate*
+.azenv
+*.zip

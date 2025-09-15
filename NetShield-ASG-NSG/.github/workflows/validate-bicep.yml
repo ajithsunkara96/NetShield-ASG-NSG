@@ -1,0 +1,18 @@
+name: Validate Bicep
+
+on:
+  pull_request:
+    paths:
+      - 'infra/bicep/**.bicep'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Az CLI
+        uses: azure/setup-azure@v4
+      - name: Bicep install
+        run: az bicep install
+      - name: Lint Bicep
+        run: az bicep build --file infra/bicep/main.bicep
