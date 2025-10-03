@@ -42,17 +42,22 @@ flowchart LR
 > Requires: Azure CLI logged in (`az login`), Owner/Contributor rights on target subscription, and SSH key present.
 
 ```bash
-# 1) Deploy base infra (VNet, subnets, ASGs, NSGs, 3 Ubuntu VMs)
-az deployment sub create \
-  --name netshield-bicep-$(date +%Y%m%d%H%M) \
-  --location canadacentral \
+# 1) Set environment variables
+export LOCATION=canadacentral
+export RG=netshield-$RANDOM
+export ADMIN=azureuser
+export PUBKEY="$(cat ~/.ssh/id_rsa.pub)"
+export MYIP_CIDR="YOUR.PUBLIC.IP/32"
+
+az group create -n $RG -l $LOCATION
+
+# 2) Deploy infra (VNet, subnets, ASGs, NSGs, 3 Ubuntu VMs)
+az deployment group create \
+  -g $RG \
   --template-file infra/bicep/main.bicep \
-  --parameters adminUsername=$USER
+  --parameters location=$LOCATION adminUsername=$ADMIN adminPublicKey="$PUBKEY" adminSshCidr="$MYIP_CIDR"
 
-# 2) Apply demo NSG rules if you prefer CLI snippets
-bash scripts/azcli/nsg-asg-setup.sh
-
-# 3) Start a simple http server on web-vm and test from app-vm
+# 3) Start simple HTTP server on web-vm and test from app-vm
 # (see docs/DEMO.md)
 ```
 
